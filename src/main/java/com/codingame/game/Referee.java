@@ -150,7 +150,7 @@ public class Referee extends AbstractReferee {
             currentDay = 0;
 
             // Resources get updated at the end of the previous month
-            gameManager.getPlayer().sendInputLine(String.valueOf(city.resources));
+            gameManager.getPlayer().sendInputLine(String.valueOf(city.resources) + " " + String.valueOf(totalScore));
 
             gameManager.getPlayer().sendInputLine(String.valueOf(city.tubes.size() + city.teleporters.size()));
             for (Teleporter tp : city.teleporters.values()) {
