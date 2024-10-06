@@ -25,6 +25,7 @@ public class CommandLineRunner {
         .addOption("t", true, "Specify the test case number to use")
         .addOption("o", true, "Path to the JSON file to write to with the results")
         .addOption("data", false, "Retrieve data sent by the bot to display them in the report")
+        .addOption("stderr", false, "Display all data sent to stderr by the bot")
       ;
 
       CommandLine command = new DefaultParser().parse(options, args);
@@ -37,6 +38,7 @@ public class CommandLineRunner {
 
       boolean testAll = command.hasOption("all");
       boolean extractData = command.hasOption("data");
+      boolean showStderr = command.hasOption("stderr");
 
       List<Integer> testCaseNumbers = new ArrayList<Integer>();
       if (testAll) {
@@ -97,7 +99,20 @@ public class CommandLineRunner {
               }
             }
           }
-        }        
+        } 
+        if (showStderr) {
+          List<String> botOutput = result.errors.get("0");
+          int outputTurnCount = botOutput.size();
+          for (int i = 0; i < outputTurnCount; ++i) {
+            String thisTurnOutput = botOutput.get(i);
+            if (thisTurnOutput == null || thisTurnOutput.isEmpty()) continue;
+            for (String line : thisTurnOutput.split("\\r?\\n")) {
+              if (!line.isEmpty()) {
+                System.out.print(String.format("    Output[turn=%d] %s\n", i, line));
+              }
+            }
+          }
+        }                
       }
 
       System.out.println(String.format("TOTAL SCORE = %07.0f", totalScore));
