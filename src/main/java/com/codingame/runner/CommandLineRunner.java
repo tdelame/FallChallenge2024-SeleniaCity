@@ -26,12 +26,13 @@ public class CommandLineRunner {
         .addOption("o", true, "Path to the JSON file to write to with the results")
         .addOption("data", false, "Retrieve data sent by the bot to display them in the report")
         .addOption("stderr", false, "Display all data sent to stderr by the bot")
+        .addOption("server", false, "Start a server to visualize the game results (ignored with -all)")
       ;
 
       CommandLine command = new DefaultParser().parse(options, args);
       if (command.hasOption("h") || !command.hasOption("bot") || (!command.hasOption("all") && !command.hasOption("t"))) {
         new HelpFormatter().printHelp(
-          "-bot path_to_bot_executable [-all | -t test_case_number] [-o output_json_file] [-data]",
+          "-bot path_to_bot_executable [-all | -t test_case_number] [-server] [-o output_json_file] [-data]",
           options);
         System.exit(0);
       }
@@ -39,6 +40,7 @@ public class CommandLineRunner {
       boolean testAll = command.hasOption("all");
       boolean extractData = command.hasOption("data");
       boolean showStderr = command.hasOption("stderr");
+      boolean server = command.hasOption("server") && !testAll;
 
       List<Integer> testCaseNumbers = new ArrayList<Integer>();
       if (testAll) {
@@ -55,6 +57,12 @@ public class CommandLineRunner {
         SoloGameRunner runner = new SoloGameRunner();
         runner.setAgent(command.getOptionValue("bot"));
         runner.setTestCase(String.format("test%d.json", testCaseNumber));
+
+        if (server) {
+          runner.start();
+          continue;
+        }
+        
         GameResult result = runner.simulate();
 
         if (testAll && testCaseNumber == 13) {
@@ -112,7 +120,7 @@ public class CommandLineRunner {
               }
             }
           }
-        }                
+        }
       }
 
       System.out.println(String.format("TOTAL SCORE = %07.0f", totalScore));

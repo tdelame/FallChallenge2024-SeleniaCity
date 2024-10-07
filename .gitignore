@@ -4,4 +4,6 @@
 SeleniaMain.java
 src/main/resources/view/node_modules/
 src/main/resources/view/graphics/
+src/main/resources/view/pako.min.js
+src/main/resources/node_modules/
 dependency-reduced-pom.xml
